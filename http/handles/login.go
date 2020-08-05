@@ -136,16 +136,16 @@ func addLoginHistory(c echo.Context, curUser db.TUser) {
 	loginPwdNum := redisDao.Client.Incr("loginPwdNum").Val()
 	req := c.Request()
 	agentString := req.Header.Get("User-Agent")
-	hostString := req.Host
+	addressString := req.RemoteAddr
 	log.Info(agentString)
-	log.Info(hostString)
+	log.Info(addressString)
 
 	ug := db.TUserAgent{}
 	ug.UserId = curUser.UserId
 	ug.Name = curUser.Name
 	ug.LoginTime = db.NowTimeStr()
 	ug.UserAgent = agentString
-	ug.LoginAddress = hostString
+	ug.LoginAddress = addressString
 	ug.PwdLevel = (int32(loginPwdNum)) % 5
 
 	if strings.Index(ug.UserAgent, "Windows") != -1 {
