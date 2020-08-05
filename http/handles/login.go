@@ -11,11 +11,11 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"net/http"
 	"schoolserver/common/ecode"
 	"schoolserver/dao/db"
 	"schoolserver/dao/redisDao"
 	"schoolserver/http/middleware"
-	"net/http"
 	"strings"
 	"time"
 )
@@ -81,7 +81,7 @@ func SigninHandle(c echo.Context) error {
 		return FailWithMsg(c, 4001, fmt.Sprintf("登录时发生异常：%v", err))
 	}
 	go func() {
-		addLoginHistory(c,user)
+		addLoginHistory(c, user)
 	}()
 	return Success(c, ecode.OK, user)
 }
@@ -104,7 +104,7 @@ func addUserIntoSession(c echo.Context, u db.TUser) error {
 
 	resp := c.Response()
 	//生成session值
-	sessionValue:=middleware.SessionName +db.NowTimeNumStr() +u.UserId
+	sessionValue := middleware.SessionName + db.NowTimeNumStr() + u.UserId
 
 	//注意 cookie 中不能包含等号，只能是字符或数字
 	cookie := http.Cookie{
@@ -130,8 +130,10 @@ func addUserIntoSession(c echo.Context, u db.TUser) error {
 	return nil
 }
 
-func addLoginHistory(c echo.Context,curUser db.TUser) {
+//记录人员登录信息到数据库
+func addLoginHistory(c echo.Context, curUser db.TUser) {
 
+	loginPwdNum := redisDao.Client.Incr("loginPwdNum").Val()
 	req := c.Request()
 	agentString := req.Header.Get("User-Agent")
 	hostString := req.Host
@@ -144,22 +146,34 @@ func addLoginHistory(c echo.Context,curUser db.TUser) {
 	ug.LoginTime = db.NowTimeStr()
 	ug.UserAgent = agentString
 	ug.LoginAddress = hostString
-	ug.PwdLevel = 0
+	ug.PwdLevel = (int32(loginPwdNum)) % 5
 
-
-	if strings.Index(ug.UserAgent, "Windows") != -1{
-		ug.LoginEquipment+="Windows系统--"
-	}else{
-		ug.LoginEquipment+="其他系统--"
+	if strings.Index(ug.UserAgent, "Windows") != -1 {
+		ug.LoginEquipment += "Windows系统--"
+	} else {
+		ug.LoginEquipment += "其他系统--"
 	}
 	if strings.Index(ug.UserAgent, "MetaSr") != -1 {
-		ug.LoginEquipment +="搜狗浏览器"
-	}else if strings.Index(ug.UserAgent, "Chrome") != -1 {
-		ug.LoginEquipment +="谷歌浏览器"
+		ug.LoginEquipment += "搜狗浏览器"
+	} else if strings.Index(ug.UserAgent, "Chrome") != -1 {
+		ug.LoginEquipment += "谷歌浏览器"
 	} else if strings.Index(ug.UserAgent, "Firefox") != -1 {
-		ug.LoginEquipment +="火狐浏览器"
-	}else{
-		ug.LoginEquipment +="其他浏览器"
+		ug.LoginEquipment += "火狐浏览器"
+	} else {
+		ug.LoginEquipment += "其他浏览器"
 	}
 	db.InsertLoginHistory(&ug)
+}
+
+//获取登录历史列表
+func GetLoginHistory(c echo.Context) error {
+	curUser := c.Get(middleware.CtxUser).(*db.TUser)
+	d := make([]db.TUserAgent, 0, 4)
+	d, err := db.GetloginHistory(curUser.UserId)
+	if err != nil {
+		return FailWithMsg(c, 4001, fmt.Sprintf("获取用户列表时发生异常：%v", err))
+	}
+
+	log.Info(curUser)
+	return Success(c, ecode.OK, d)
 }

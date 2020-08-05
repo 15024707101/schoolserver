@@ -59,13 +59,8 @@ func (tt *TUserAgent) Insert(f func() error) error {
 	return nil
 }
 
-/*id
-userId
-name
-loginTime
-loginEquipment
-loginAddress
-userAgent
-pwdLevel
-status
-*/
+func GetloginHistory(userId  string) ([]TUserAgent, error) {
+	d := make([]TUserAgent, 0, 4)
+	_ = engineSchool.Table(LoginHistoryTable).Where("userId=?", userId).Desc("loginTime").Limit(30, 0).Find(&d)
+	return d, nil
+}
