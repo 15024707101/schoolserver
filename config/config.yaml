@@ -1,0 +1,590 @@
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: root
+  protocol: tcp # unix
+  #unixdomain: /tmp/mysql.sock # 与 host:port 二选一
+  dbname: zhtj # If you do not want to preselect a database, leave dbname empty: /
+  maxopenconns: 10
+  maxidleconns: 0
+  connmaxlifetime: 0s
+
+  params:
+    # allowAllFiles=true disables the file Whitelist for LOAD DATA LOCAL INFILE and allows all files
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    allowAllFiles: true
+
+    # allowCleartextPasswords=true allows using the cleartext client side plugin if required by an account,
+    # such as one defined with the PAM authentication plugin. Sending passwords in clear text may be a security problem in some configurations.
+    # To avoid problems if there is any possibility that the password would be intercepted, clients should connect to MySQL Server using a method that
+    # protects the password. Possibilities include TLS / SSL, IPsec, or a private network.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    allowCleartextPasswords: true
+
+    # allowNativePasswords=false disallows the usage of MySQL native password method
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        true
+    allowNativePasswords: true
+
+    # allowOldPasswords=true allows the usage of the insecure old password method. This should be avoided,
+    # but is necessary in some cases. See also the old_passwords wiki page.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    allowOldPasswords: true
+
+    # Sets the charset used for client-server interaction ("SET NAMES <value>"). If multiple charsets are set (separated by a comma), the following
+    # charset is used if setting the charset failes. This enables for example support for utf8mb4 (introduced in MySQL 5.5.3) with fallback to utf8
+    # for older servers (charset=utf8mb4,utf8).
+    # Type:           string
+    # Valid Values:   <name>
+    # Default:        none
+    charset: utf8
+
+    # Sets the collation used for client-server interaction on connection. In contrast to charset, collation does not issue additional queries. If
+    # the specified collation is unavailable on the target server, the connection will fail.
+    # Type:           string
+    # Valid Values:   <name>
+    # Default:        utf8_general_ci
+    collation: utf8_general_ci
+
+    # clientFoundRows=true causes an UPDATE to return the number of matching rows instead of the number of rows changed.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    clientFoundRows: false
+
+    # When columnsWithAlias is true, calls to sql.Rows.Columns() will return the table alias and the column name separated by a dot. For example:
+    #   SELECT u.id FROM users as u
+    #   will return u.id instead of just id if columnsWithAlias=true.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    columnsWithAlias: false
+
+    # If interpolateParams is true, placeholders (?) in calls to db.Query() and db.Exec() are interpolated into a single query string with given
+    # parameters. This reduces the number of roundtrips, since the driver has to prepare a statement, execute it with given parameters and close
+    # the statement again with interpolateParams=false.
+
+    # This can not be used together with the multibyte encodings BIG5, CP932, GB2312, GBK or SJIS. These are blacklisted as they may introduce a SQL injection vulnerability!
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    interpolateParams: false
+
+    # Sets the location for time.Time values (when using parseTime=true). "Local" sets the system's location. See time.LoadLocation for details.
+
+    # Note that this sets the location for time.Time values but does not change MySQL's time_zone setting. For that see the time_zone system variable, which can also be set as a DSN parameter.
+
+    # Please keep in mind, that param values must be url.QueryEscape'ed. Alternatively you can manually replace the / with %2F. For example US/Pacific would be loc=US%2FPacific.
+    # Type:           string
+    # Valid Values:   <escaped name>
+    # Default:        UTC
+    loc: UTC
+
+    # Max packet size allowed in bytes. The default value is 4 MiB and should be adjusted to match the server settings. maxAllowedPacket=0 can be used to automatically
+    # fetch the max_allowed_packet variable from server on every connection.
+    # Type:          decimal number
+    # Default:       4194304
+    maxAllowedPacket: 4194304
+
+    # Allow multiple statements in one query. While this allows batch queries, it also greatly increases the risk of SQL injections. Only the result of the first query
+    # is returned, all other results are silently discarded.
+    # When multiStatements is used, ? parameters must only be used in the first statement.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    multiStatements: false
+
+    # parseTime=true changes the output type of DATE and DATETIME values to time.Time instead of []byte / string
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    parseTime: false
+
+    # I/O read timeout. The value must be a decimal number with a unit suffix ("ms", "s", "m", "h"), such as "30s", "0.5m" or "1m30s".
+    # Type:           duration
+    # Default:        0
+    readTimeout: 0s
+
+    # rejectReadOnly=true causes the driver to reject read-only connections. This is for a possible race condition during an automatic failover, where the mysql client gets connected to
+    # a read-only replica after the failover.
+
+    # Note that this should be a fairly rare case, as an automatic failover normally hif len(queryYear)!=0&&queryYear!="undefined"  {ens when the primary is down, and the race condition shouldn't happen unless it comes back up online as soon as
+    # the failover is kicked off. On the other hand, when this happens, a MySQL application can get stuck on a read-only connection until restarted. It is however fairly easy to reproduce, for example,
+    # using a manual failover on AWS Aurora's MySQL-compatible cluster.
+
+    # If you are not relying on read-only transactions to reject writes that aren't supposed to happen, setting this on some MySQL providers (such as AWS Aurora) is safer for failovers.
+
+    # Note that ERROR 1290 can be returned for a read-only server and this option will cause a retry for that error. However the same error number is used for some other cases. You should ensure
+    # your application will never cause an ERROR 1290 except for read-only mode when enabling this option.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    rejectReadOnly: false
+
+    # Timeout for establishing connections, aka dial timeout. The value must be a decimal number with a unit suffix ("ms", "s", "m", "h"), such as "30s", "0.5m" or "1m30s".
+    # Type:           duration
+    # Default:        OS default
+    timeout:
+
+    # tls=true enables TLS / SSL encrypted connection to the server. Use skip-verify if you want to use a self-signed or invalid certificate (server side). Use a custom value
+    # registered with mysql.RegisterTLSConfig.
+    # Type:           bool / string
+    # Valid Values:   true, false, skip-verify, <name>
+    # Default:        false
+    tls: false
+
+    # I/O write timeout. The value must be a decimal number with a unit suffix ("ms", "s", "m", "h"), such as "30s", "0.5m" or "1m30s"
+    # Type:           duration
+    # Default:        0
+    writeTimeout: 0s
+
+    # System Variables
+
+    # Any other parameters are interpreted as system variables:
+
+    # <boolean_var>=<value>: SET <boolean_var>=<value>
+    # <enum_var>=<value>: SET <enum_var>=<value>
+    # <string_var>=%27<value>%27: SET <string_var>='<value>'
+    # Rules:
+
+    # The values for string variables must be quoted with '.
+    # The values must also be url.QueryEscape'ed! (which implies values of string variables must be wrapped with %27).
+    # Examples:
+
+    # autocommit=1: SET autocommit=1
+    # time_zone=%27Europe%2FParis%27: SET time_zone='Europe/Paris'
+    # tx_isolation=%27REPEATABLE-READ%27: SET tx_isolation='REPEATABLE-READ'
+    paramsstr: "key1=value1&key2=value2&autocommit=0"
+
+  #复制一个mysql连接，用于将 message插入到新的数据库
+mysqlschool:
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: root
+  protocol: tcp # unix
+  #unixdomain: /tmp/mysql.sock # 与 host:port 二选一
+  dbname: myschool # If you do not want to preselect a database, leave dbname empty: /
+  maxopenconns: 10
+  maxidleconns: 0
+  connmaxlifetime: 0s
+
+  params:
+    # allowAllFiles=true disables the file Whitelist for LOAD DATA LOCAL INFILE and allows all files
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    allowAllFiles: true
+
+    # allowCleartextPasswords=true allows using the cleartext client side plugin if required by an account,
+    # such as one defined with the PAM authentication plugin. Sending passwords in clear text may be a security problem in some configurations.
+    # To avoid problems if there is any possibility that the password would be intercepted, clients should connect to MySQL Server using a method that
+    # protects the password. Possibilities include TLS / SSL, IPsec, or a private network.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    allowCleartextPasswords: true
+
+    # allowNativePasswords=false disallows the usage of MySQL native password method
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        true
+    allowNativePasswords: true
+
+    # allowOldPasswords=true allows the usage of the insecure old password method. This should be avoided,
+    # but is necessary in some cases. See also the old_passwords wiki page.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    allowOldPasswords: true
+
+    # Sets the charset used for client-server interaction ("SET NAMES <value>"). If multiple charsets are set (separated by a comma), the following
+    # charset is used if setting the charset failes. This enables for example support for utf8mb4 (introduced in MySQL 5.5.3) with fallback to utf8
+    # for older servers (charset=utf8mb4,utf8).
+    # Type:           string
+    # Valid Values:   <name>
+    # Default:        none
+    charset: utf8
+
+    # Sets the collation used for client-server interaction on connection. In contrast to charset, collation does not issue additional queries. If
+    # the specified collation is unavailable on the target server, the connection will fail.
+    # Type:           string
+    # Valid Values:   <name>
+    # Default:        utf8_general_ci
+    collation: utf8_general_ci
+
+    # clientFoundRows=true causes an UPDATE to return the number of matching rows instead of the number of rows changed.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    clientFoundRows: false
+
+    # When columnsWithAlias is true, calls to sql.Rows.Columns() will return the table alias and the column name separated by a dot. For example:
+    #   SELECT u.id FROM users as u
+    #   will return u.id instead of just id if columnsWithAlias=true.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    columnsWithAlias: false
+
+    # If interpolateParams is true, placeholders (?) in calls to db.Query() and db.Exec() are interpolated into a single query string with given
+    # parameters. This reduces the number of roundtrips, since the driver has to prepare a statement, execute it with given parameters and close
+    # the statement again with interpolateParams=false.
+
+    # This can not be used together with the multibyte encodings BIG5, CP932, GB2312, GBK or SJIS. These are blacklisted as they may introduce a SQL injection vulnerability!
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    interpolateParams: false
+
+    # Sets the location for time.Time values (when using parseTime=true). "Local" sets the system's location. See time.LoadLocation for details.
+
+    # Note that this sets the location for time.Time values but does not change MySQL's time_zone setting. For that see the time_zone system variable, which can also be set as a DSN parameter.
+
+    # Please keep in mind, that param values must be url.QueryEscape'ed. Alternatively you can manually replace the / with %2F. For example US/Pacific would be loc=US%2FPacific.
+    # Type:           string
+    # Valid Values:   <escaped name>
+    # Default:        UTC
+    loc: UTC
+
+    # Max packet size allowed in bytes. The default value is 4 MiB and should be adjusted to match the server settings. maxAllowedPacket=0 can be used to automatically
+    # fetch the max_allowed_packet variable from server on every connection.
+    # Type:          decimal number
+    # Default:       4194304
+    maxAllowedPacket: 4194304
+
+    # Allow multiple statements in one query. While this allows batch queries, it also greatly increases the risk of SQL injections. Only the result of the first query
+    # is returned, all other results are silently discarded.
+    # When multiStatements is used, ? parameters must only be used in the first statement.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    multiStatements: false
+
+    # parseTime=true changes the output type of DATE and DATETIME values to time.Time instead of []byte / string
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    parseTime: false
+
+    # I/O read timeout. The value must be a decimal number with a unit suffix ("ms", "s", "m", "h"), such as "30s", "0.5m" or "1m30s".
+    # Type:           duration
+    # Default:        0
+    readTimeout: 0s
+
+    # rejectReadOnly=true causes the driver to reject read-only connections. This is for a possible race condition during an automatic failover, where the mysql client gets connected to
+    # a read-only replica after the failover.
+
+    # Note that this should be a fairly rare case, as an automatic failover normally happens when the primary is down, and the race condition shouldn't happen unless it comes back up online as soon as
+    # the failover is kicked off. On the other hand, when this happens, a MySQL application can get stuck on a read-only connection until restarted. It is however fairly easy to reproduce, for example,
+    # using a manual failover on AWS Aurora's MySQL-compatible cluster.
+
+    # If you are not relying on read-only transactions to reject writes that aren't supposed to happen, setting this on some MySQL providers (such as AWS Aurora) is safer for failovers.
+
+    # Note that ERROR 1290 can be returned for a read-only server and this option will cause a retry for that error. However the same error number is used for some other cases. You should ensure
+    # your application will never cause an ERROR 1290 except for read-only mode when enabling this option.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    rejectReadOnly: false
+
+    # Timeout for establishing connections, aka dial timeout. The value must be a decimal number with a unit suffix ("ms", "s", "m", "h"), such as "30s", "0.5m" or "1m30s".
+    # Type:           duration
+    # Default:        OS default
+    timeout:
+
+    # tls=true enables TLS / SSL encrypted connection to the server. Use skip-verify if you want to use a self-signed or invalid certificate (server side). Use a custom value
+    # registered with mysql.RegisterTLSConfig.
+    # Type:           bool / string
+    # Valid Values:   true, false, skip-verify, <name>
+    # Default:        false
+    tls: false
+
+    # I/O write timeout. The value must be a decimal number with a unit suffix ("ms", "s", "m", "h"), such as "30s", "0.5m" or "1m30s"
+    # Type:           duration
+    # Default:        0
+    writeTimeout: 0s
+
+    # System Variables
+
+    # Any other parameters are interpreted as system variables:
+
+    # <boolean_var>=<value>: SET <boolean_var>=<value>
+    # <enum_var>=<value>: SET <enum_var>=<value>
+    # <string_var>=%27<value>%27: SET <string_var>='<value>'
+    # Rules:
+
+    # The values for string variables must be quoted with '.
+    # The values must also be url.QueryEscape'ed! (which implies values of string variables must be wrapped with %27).
+    # Examples:
+
+    # autocommit=1: SET autocommit=1
+    # time_zone=%27Europe%2FParis%27: SET time_zone='Europe/Paris'
+    # tx_isolation=%27REPEATABLE-READ%27: SET tx_isolation='REPEATABLE-READ'
+    paramsstr: "key1=value1&key2=value2&autocommit=0"
+
+  #复制一个mysql连接，用于将 message插入到新的数据库
+mysqlmsg:
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: root
+  protocol: tcp # unix
+  #unixdomain: /tmp/mysql.sock # 与 host:port 二选一
+  dbname: myschool # If you do not want to preselect a database, leave dbname empty: /
+  maxopenconns: 10
+  maxidleconns: 0
+  connmaxlifetime: 0s
+
+  params:
+    # allowAllFiles=true disables the file Whitelist for LOAD DATA LOCAL INFILE and allows all files
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    allowAllFiles: true
+
+    # allowCleartextPasswords=true allows using the cleartext client side plugin if required by an account,
+    # such as one defined with the PAM authentication plugin. Sending passwords in clear text may be a security problem in some configurations.
+    # To avoid problems if there is any possibility that the password would be intercepted, clients should connect to MySQL Server using a method that
+    # protects the password. Possibilities include TLS / SSL, IPsec, or a private network.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    allowCleartextPasswords: true
+
+    # allowNativePasswords=false disallows the usage of MySQL native password method
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        true
+    allowNativePasswords: true
+
+    # allowOldPasswords=true allows the usage of the insecure old password method. This should be avoided,
+    # but is necessary in some cases. See also the old_passwords wiki page.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    allowOldPasswords: true
+
+    # Sets the charset used for client-server interaction ("SET NAMES <value>"). If multiple charsets are set (separated by a comma), the following
+    # charset is used if setting the charset failes. This enables for example support for utf8mb4 (introduced in MySQL 5.5.3) with fallback to utf8
+    # for older servers (charset=utf8mb4,utf8).
+    # Type:           string
+    # Valid Values:   <name>
+    # Default:        none
+    charset: utf8
+
+    # Sets the collation used for client-server interaction on connection. In contrast to charset, collation does not issue additional queries. If
+    # the specified collation is unavailable on the target server, the connection will fail.
+    # Type:           string
+    # Valid Values:   <name>
+    # Default:        utf8_general_ci
+    collation: utf8_general_ci
+
+    # clientFoundRows=true causes an UPDATE to return the number of matching rows instead of the number of rows changed.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    clientFoundRows: false
+
+    # When columnsWithAlias is true, calls to sql.Rows.Columns() will return the table alias and the column name separated by a dot. For example:
+    #   SELECT u.id FROM users as u
+    #   will return u.id instead of just id if columnsWithAlias=true.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    columnsWithAlias: false
+
+    # If interpolateParams is true, placeholders (?) in calls to db.Query() and db.Exec() are interpolated into a single query string with given
+    # parameters. This reduces the number of roundtrips, since the driver has to prepare a statement, execute it with given parameters and close
+    # the statement again with interpolateParams=false.
+
+    # This can not be used together with the multibyte encodings BIG5, CP932, GB2312, GBK or SJIS. These are blacklisted as they may introduce a SQL injection vulnerability!
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    interpolateParams: false
+
+    # Sets the location for time.Time values (when using parseTime=true). "Local" sets the system's location. See time.LoadLocation for details.
+
+    # Note that this sets the location for time.Time values but does not change MySQL's time_zone setting. For that see the time_zone system variable, which can also be set as a DSN parameter.
+
+    # Please keep in mind, that param values must be url.QueryEscape'ed. Alternatively you can manually replace the / with %2F. For example US/Pacific would be loc=US%2FPacific.
+    # Type:           string
+    # Valid Values:   <escaped name>
+    # Default:        UTC
+    loc: UTC
+
+    # Max packet size allowed in bytes. The default value is 4 MiB and should be adjusted to match the server settings. maxAllowedPacket=0 can be used to automatically
+    # fetch the max_allowed_packet variable from server on every connection.
+    # Type:          decimal number
+    # Default:       4194304
+    maxAllowedPacket: 4194304
+
+    # Allow multiple statements in one query. While this allows batch queries, it also greatly increases the risk of SQL injections. Only the result of the first query
+    # is returned, all other results are silently discarded.
+    # When multiStatements is used, ? parameters must only be used in the first statement.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    multiStatements: false
+
+    # parseTime=true changes the output type of DATE and DATETIME values to time.Time instead of []byte / string
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    parseTime: false
+
+    # I/O read timeout. The value must be a decimal number with a unit suffix ("ms", "s", "m", "h"), such as "30s", "0.5m" or "1m30s".
+    # Type:           duration
+    # Default:        0
+    readTimeout: 0s
+
+    # rejectReadOnly=true causes the driver to reject read-only connections. This is for a possible race condition during an automatic failover, where the mysql client gets connected to
+    # a read-only replica after the failover.
+
+    # Note that this should be a fairly rare case, as an automatic failover normally happens when the primary is down, and the race condition shouldn't happen unless it comes back up online as soon as
+    # the failover is kicked off. On the other hand, when this happens, a MySQL application can get stuck on a read-only connection until restarted. It is however fairly easy to reproduce, for example,
+    # using a manual failover on AWS Aurora's MySQL-compatible cluster.
+
+    # If you are not relying on read-only transactions to reject writes that aren't supposed to happen, setting this on some MySQL providers (such as AWS Aurora) is safer for failovers.
+
+    # Note that ERROR 1290 can be returned for a read-only server and this option will cause a retry for that error. However the same error number is used for some other cases. You should ensure
+    # your application will never cause an ERROR 1290 except for read-only mode when enabling this option.
+    # Type:           bool
+    # Valid Values:   true, false
+    # Default:        false
+    rejectReadOnly: false
+
+    # Timeout for establishing connections, aka dial timeout. The value must be a decimal number with a unit suffix ("ms", "s", "m", "h"), such as "30s", "0.5m" or "1m30s".
+    # Type:           duration
+    # Default:        OS default
+    timeout:
+
+    # tls=true enables TLS / SSL encrypted connection to the server. Use skip-verify if you want to use a self-signed or invalid certificate (server side). Use a custom value
+    # registered with mysql.RegisterTLSConfig.
+    # Type:           bool / string
+    # Valid Values:   true, false, skip-verify, <name>
+    # Default:        false
+    tls: false
+
+    # I/O write timeout. The value must be a decimal number with a unit suffix ("ms", "s", "m", "h"), such as "30s", "0.5m" or "1m30s"
+    # Type:           duration
+    # Default:        0
+    writeTimeout: 0s
+
+    # System Variables
+
+    # Any other parameters are interpreted as system variables:
+
+    # <boolean_var>=<value>: SET <boolean_var>=<value>
+    # <enum_var>=<value>: SET <enum_var>=<value>
+    # <string_var>=%27<value>%27: SET <string_var>='<value>'
+    # Rules:
+
+    # The values for string variables must be quoted with '.
+    # The values must also be url.QueryEscape'ed! (which implies values of string variables must be wrapped with %27).
+    # Examples:
+
+    # autocommit=1: SET autocommit=1
+    # time_zone=%27Europe%2FParis%27: SET time_zone='Europe/Paris'
+    # tx_isolation=%27REPEATABLE-READ%27: SET tx_isolation='REPEATABLE-READ'
+    paramsstr: "key1=value1&key2=value2&autocommit=0"
+
+  #复制一个mysql连接，用于将 message插入到新的数据库
+
+
+redis:
+  # // The network type, either tcp or unix.
+  # // Default is tcp.
+  network: tcp
+
+  # // host:port address.
+  #  addr: "192.168.124.133:6379"
+  #  password: "c1234567"
+
+  #  addr: "172.29.35.147:6379"
+  #  password: "mypass"
+
+  #  addr: "172.29.33.91:6379"
+  #  password:
+
+
+  # // Database to be selected after connecting to the server.
+  addr: "127.0.0.1:6379"
+  password:
+  db: 3
+
+  # // Maximum number of retries before giving up.
+  # // Default is to not retry failed commands.
+  maxretries: 3
+
+  # // Minimum backoff between each retry.
+  # // Default is 8 milliseconds; -1 disables backoff.
+  minRetryBackoff: 8
+
+  # // Maximum backoff between each retry.
+  # // Default is 512 milliseconds; -1 disables backoff.
+  maxRetryBackoff: 512
+
+  # // Dial timeout for establishing new connections.
+  # // Default is 5 seconds.
+  dialtimeout: 5s
+
+  # // Timeout for socket reads. If reached, commands will fail
+  # // with a timeout instead of blocking.
+  # // Default is 3 seconds.
+  readtimeout: 3s
+  # // Timeout for socket writes. If reached, commands will fail
+  # // with a timeout instead of blocking.
+  # // Default is ReadTimeout.
+  writetimeout: 3s
+
+  # // Maximum number of socket connections.
+  # // Default is 10 connections per every CPU as reported by runtime.NumCPU.
+  poolsize: 10
+
+  # // Amount of time client waits for connection if all connections
+  # // are busy before returning an error.
+  # // Default is ReadTimeout + 1 second.
+  pooltimeout: 4s
+  # // Amount of time after which client closes idle connections.
+  # // Should be less than server's timeout.
+  # // Default is 5 minutes.
+  idletimeout: 5m
+  # // Frequency of idle checks.
+  # // Default is 1 minute.
+  # // When minus value is set, then idle check is disabled.
+  idlecheckfrequency: 1m
+
+  # // Enables read only queries on slave nodes.
+  readonly: false
+
+  #- eshost: "http://172.19.5.148"
+es:
+  #- eshost: "http://172.29.35.147"
+  #  esport: 9200
+  - eshost: "http://127.0.0.1"
+    esport: 9200
+sys:
+  #异步处理消息的Channel 最大限制数量数
+  max_message_num: 1000
+  max_messager_num: 1000
+  max_messageru_num: 1000
+  log_level: debug
+  log_file_name: logs/maotaiapi.log
+  backend_addr: "172.29.35.147:9090"
+  db_log_level: debug
+  db_log_file_path: logs/db.log
+  service_mode: debug
+  service_name: OPENSERVER
+  params_out_time : 600
+  jwt_key: "secret"
+
