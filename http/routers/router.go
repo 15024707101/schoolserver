@@ -12,6 +12,7 @@ func RegisterRouters(router *echo.Echo) {
 
 		unlogin.POST("/signin", handles.SigninHandle)
 		unlogin.POST("/decode", handles.GetDecodeString)
+		unlogin.POST("/uploadImg", handles.UploadImg)
 	}
 	// testing
 	test := router.Group("/test")
