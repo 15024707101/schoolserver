@@ -28,7 +28,7 @@ func init() {
 	var configFile = flag.String("conf", "config/config.yaml", "configure file path")
 
 	flag.StringVar(&port, "port", "3334", "listen port")
-	flag.StringVar(&host, "host", "172.29.33.90", "listen host")
+	flag.StringVar(&host, "host", "127.0.0.1", "listen host")
 
 	var configs conf.AllConfig
 

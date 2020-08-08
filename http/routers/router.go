@@ -7,6 +7,10 @@ import (
 )
 
 func RegisterRouters(router *echo.Echo) {
+
+	//router.Static("/img","/")
+	router.Static("/img","static/img")
+
 	unlogin := router.Group("/unlogin")
 	{
 

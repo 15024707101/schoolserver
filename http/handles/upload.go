@@ -2,12 +2,13 @@ package handles
 
 import (
 	"fmt"
+	"github.com/gofrs/uuid"
 	"github.com/labstack/echo/v4"
 	"io"
 	"os"
 	"path"
+	"path/filepath"
 	"schoolserver/common/ecode"
-	"strings"
 )
 
 func UploadImg(c echo.Context) error {
@@ -29,20 +30,45 @@ func UploadImg(c echo.Context) error {
 	}
 	defer src.Close()
 
-	fileExt := path.Ext(fileHeader.Filename)
-	fileExtLower := strings.ToLower(fileExt)
+	fileExt := path.Ext(file.Filename)
+	/*fileExtLower := strings.ToLower(fileExt)*/
 	// Destination
-	dst, err := os.Create(file.Filename)
+	/*dst, err := os.Create(file.Filename)
 	if err != nil {
 		return err
 	}
-	defer dst.Close()
+	defer dst.Close()*/
+
+	id_, err := uuid.NewV4()
+	if err != nil {
+		return echo.NewHTTPError(67918, "获取数据发生错误，请联系系统管理员")
+	}
+	fname := id_.String() + fileExt
+	realPath := filepath.Join("static/img", fname)
+	outputFile, err := os.OpenFile(realPath, os.O_WRONLY|os.O_CREATE, os.ModePerm)
+	if err != nil {
+		return echo.NewHTTPError(7782, "创建文件失败")
+	}
+	defer outputFile.Close()
 
 	// Copy
-	if _, err = io.Copy(dst, src); err != nil {
+	if _, err = io.Copy(outputFile, src); err != nil {
 		return err
 	}
-	return Success(c, ecode.OK, "5464231")
+	ret := struct {
+		FileId           string `json:"fileId"`
+		FileUrl          string `json:"fileUrl"`
+		FileName         string `json:"fileName"`
+		ThumbnailFileId  string `json:"thumbnailFileId"`
+		ThumbnailFileUrl string `json:"thumbnailFileUrl"`
+	}{
+		"wqpei",
+		"http://127.0.0.1:3334/img/"+fname,
+		"我的图片",
+		"7845",
+		"http://127.0.0.1:3334/img/"+fname,
+	}
+	return Success(c, ecode.OK, ret)
 }
 
 //func UploadTwoRedFileHandler(c echo.Context) error {
