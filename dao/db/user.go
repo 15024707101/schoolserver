@@ -13,7 +13,7 @@ type TUser struct {
 	IdentityCardNo string `json:"identityCardNo" xorm:"identityCardNo"`
 	Mobile         string `json:"mobile" xorm:"mobile"`
 	Pwd            string `json:"pwd" xorm:"pwd"`
-	Sex            string `json:"sex" xorm:"sex"`
+	Sex            int32 `json:"sex" xorm:"sex"`
 	ClassId        string `json:"classId" xorm:"classId"`
 	Age            int32  `json:"age" xorm:"age"`
 	PersonType     int32  `json:"personType" xorm:"personType"`
@@ -32,4 +32,17 @@ func GetUserList() ([]TUser, error) {
 	_ = engineSchool.Table(UserTable).Where("status=?", 1).Desc("createTime").Limit(100, 0).Find(&d)
 	return d, nil
 
+}
+
+func InsertUser(t *TUser) error {
+	tx := engineSchool.NewSession()
+	total, err := tx.Table(UserTable).Insert(t)
+
+	if err != nil {
+		return tx.Rollback()
+	}
+	if total <= 0 {
+		return tx.Rollback()
+	}
+	return tx.Commit()
 }

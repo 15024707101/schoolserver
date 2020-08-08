@@ -14,6 +14,7 @@ import (
 func UploadImg(c echo.Context) error {
 	// Read form fields
 	name := c.FormValue("name")
+	photoDir := c.FormValue("photoDir")
 	fmt.Println(name)
 	//-----------
 	// Read file
@@ -44,7 +45,7 @@ func UploadImg(c echo.Context) error {
 		return echo.NewHTTPError(67918, "获取数据发生错误，请联系系统管理员")
 	}
 	fname := id_.String() + fileExt
-	realPath := filepath.Join("static/img", fname)
+	realPath := filepath.Join("static/img"+photoDir, fname)
 	outputFile, err := os.OpenFile(realPath, os.O_WRONLY|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		return echo.NewHTTPError(7782, "创建文件失败")
@@ -63,10 +64,10 @@ func UploadImg(c echo.Context) error {
 		ThumbnailFileUrl string `json:"thumbnailFileUrl"`
 	}{
 		"wqpei",
-		"http://127.0.0.1:3334/img/"+fname,
+		"http://127.0.0.1:3334/img"+photoDir+"/"+fname,
 		"我的图片",
 		"7845",
-		"http://127.0.0.1:3334/img/"+fname,
+		"http://127.0.0.1:3334/img"+photoDir+"/"+fname,
 	}
 	return Success(c, ecode.OK, ret)
 }
