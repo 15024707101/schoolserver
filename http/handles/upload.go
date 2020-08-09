@@ -11,6 +11,17 @@ import (
 	"schoolserver/common/ecode"
 )
 
+var FileUrlString = "http://127.0.0.1:3334/img"
+var FileDirString = "static/img"
+
+type GoFile struct {
+	FileId   string `json:"fileId"`
+	FileUrl  string `json:"fileUrl"`
+	FileName string `json:"fileName"`
+	FilePath string `json:"filePath"`
+}
+
+//上传图片
 func UploadImg(c echo.Context) error {
 	// Read form fields
 	name := c.FormValue("name")
@@ -45,7 +56,7 @@ func UploadImg(c echo.Context) error {
 		return echo.NewHTTPError(67918, "获取数据发生错误，请联系系统管理员")
 	}
 	fname := id_.String() + fileExt
-	realPath := filepath.Join("static/img"+photoDir, fname)
+	realPath := filepath.Join(FileDirString+photoDir, fname)
 	outputFile, err := os.OpenFile(realPath, os.O_WRONLY|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		return echo.NewHTTPError(7782, "创建文件失败")
@@ -57,19 +68,31 @@ func UploadImg(c echo.Context) error {
 		return err
 	}
 	ret := struct {
-		FileId           string `json:"fileId"`
-		FileUrl          string `json:"fileUrl"`
-		FileName         string `json:"fileName"`
-		ThumbnailFileId  string `json:"thumbnailFileId"`
-		ThumbnailFileUrl string `json:"thumbnailFileUrl"`
+		FileId   string `json:"fileId"`
+		FileUrl  string `json:"fileUrl"`
+		FileName string `json:"fileName"`
+		FilePath string `json:"filePath"`
 	}{
-		"wqpei",
-		"http://127.0.0.1:3334/img"+photoDir+"/"+fname,
-		"我的图片",
-		"7845",
-		"http://127.0.0.1:3334/img"+photoDir+"/"+fname,
+		fname,
+		FileUrlString + photoDir + "/" + fname,
+		fname,
+		realPath,
 	}
 	return Success(c, ecode.OK, ret)
+}
+
+//删除文件
+func DeleteFile(c echo.Context) error {
+	f := new(GoFile)
+	if err := c.Bind(f); err != nil {
+		return FailWithMsg(c, 4001, fmt.Sprintf("删除时发生异常：%v", err))
+	}
+	filepath := f.FilePath
+	err := os.Remove(filepath)
+	if err != nil {
+		return FailWithMsg(c, 4001, fmt.Sprintf("删除失败，未找到指定文件：%v", err))
+	}
+	return Success(c, ecode.OK, "删除成功")
 }
 
 //func UploadTwoRedFileHandler(c echo.Context) error {

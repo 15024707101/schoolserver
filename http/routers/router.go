@@ -9,15 +9,16 @@ import (
 func RegisterRouters(router *echo.Echo) {
 
 	//router.Static("/img","/")
-	router.Static("/img","static/img")
+	router.Static("/img", "static/img")
 
 	unlogin := router.Group("/unlogin")
 	{
 
-		unlogin.POST("/signin", handles.SigninHandle)
-		unlogin.POST("/decode", handles.GetDecodeString)
-		unlogin.POST("/register", handles.Register)
-		unlogin.POST("/uploadImg", handles.UploadImg)
+		unlogin.POST("/signin", handles.SigninHandle)    //登录
+		unlogin.POST("/decode", handles.GetDecodeString) //解密
+		unlogin.POST("/register", handles.Register)      //注册功能
+		unlogin.POST("/uploadImg", handles.UploadImg)    //上传图片
+		unlogin.POST("/deleteFile", handles.DeleteFile)  //删除文件
 	}
 	// testing
 	test := router.Group("/test")
