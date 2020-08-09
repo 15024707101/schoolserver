@@ -43,19 +43,19 @@ func UploadImg(c echo.Context) error {
 	defer src.Close()
 
 	fileExt := path.Ext(file.Filename)
-	/*fileExtLower := strings.ToLower(fileExt)*/
-	// Destination
-	/*dst, err := os.Create(file.Filename)
-	if err != nil {
-		return err
-	}
-	defer dst.Close()*/
 
 	id_, err := uuid.NewV4()
 	if err != nil {
 		return echo.NewHTTPError(67918, "获取数据发生错误，请联系系统管理员")
 	}
 	fname := id_.String() + fileExt
+
+	//去创建指定目录（）
+	err = os.MkdirAll(FileDirString+photoDir, os.ModePerm)
+	if err != nil {
+		return echo.NewHTTPError(7780, "创建目录出错")
+	}
+
 	realPath := filepath.Join(FileDirString+photoDir, fname)
 	outputFile, err := os.OpenFile(realPath, os.O_WRONLY|os.O_CREATE, os.ModePerm)
 	if err != nil {
