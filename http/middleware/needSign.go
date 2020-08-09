@@ -46,7 +46,7 @@ func checkLogin(c echo.Context) ecode.ECode {
 	}
 	//重新设置有效期
 	//向redis 中存储session信息
-	redisDao.SaveRedisExpire(sessionID, 10*time.Minute)
+	redisDao.SaveRedisExpire(sessionID, 30*time.Minute)
 
 	c.Set(CtxUserId, currUser.UserId)
 	c.Set(CtxUser, &currUser)

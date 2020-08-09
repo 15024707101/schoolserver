@@ -81,6 +81,59 @@ func UploadImg(c echo.Context) error {
 	return Success(c, ecode.OK, ret)
 }
 
+//上传图片公共方法
+func UploadImgUtil(c echo.Context) (*GoFile, error) {
+
+	photoDir := c.FormValue("photoDir")
+	// Source
+	file, err := c.FormFile("file")
+	if err != nil {
+		return nil, err
+	}
+	src, err := file.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer src.Close()
+
+	fileExt := path.Ext(file.Filename)
+
+	id_, err := uuid.NewV4()
+	if err != nil {
+		return nil, echo.NewHTTPError(67918, "获取数据发生错误，请联系系统管理员")
+	}
+	fname := id_.String() + fileExt
+
+	//去创建指定目录（）
+	err = os.MkdirAll(FileDirString+photoDir, os.ModePerm)
+	if err != nil {
+		return nil, echo.NewHTTPError(7780, "创建目录出错")
+	}
+
+	realPath := filepath.Join(FileDirString+photoDir, fname)
+	outputFile, err := os.OpenFile(realPath, os.O_WRONLY|os.O_CREATE, os.ModePerm)
+	if err != nil {
+		return nil, echo.NewHTTPError(7782, "创建文件失败")
+	}
+	defer outputFile.Close()
+
+	// Copy
+	if _, err = io.Copy(outputFile, src); err != nil {
+		return nil, err
+	}
+	id_2, err := uuid.NewV4()
+	if err != nil {
+		return nil, echo.NewHTTPError(67918, "获取数据发生错误，请联系系统管理员")
+	}
+	ret := GoFile{
+		id_2.String(),
+		FileUrlString + photoDir + "/" + fname,
+		fname,
+		realPath,
+	}
+	return &ret, nil
+}
+
 //删除文件
 func DeleteFile(c echo.Context) error {
 	f := new(GoFile)

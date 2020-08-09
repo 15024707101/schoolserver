@@ -19,6 +19,7 @@ func RegisterRouters(router *echo.Echo) {
 		unlogin.POST("/register", handles.Register)      //注册功能
 		unlogin.POST("/uploadImg", handles.UploadImg)    //上传图片
 		unlogin.POST("/deleteFile", handles.DeleteFile)  //删除文件
+		unlogin.POST("/appendPhoto", handles.AppendPhoto)
 	}
 	// testing
 	test := router.Group("/test")
