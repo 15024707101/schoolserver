@@ -36,6 +36,7 @@ func RegisterRouters(router *echo.Echo) {
 		admin.POST("/loginHistoryList", handles.GetLoginHistory)
 		admin.POST("/createAlbum", handles.CreateAlbum)
 		admin.POST("/photoDirList", handles.GetPhotoDirList)
+		admin.POST("/photoList", handles.GetPhotoList)
 	}
 	router.POST("signout", handles.SignOutHandler, middleware.IsUserLoggedIn)
 
