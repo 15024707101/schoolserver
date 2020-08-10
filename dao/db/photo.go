@@ -26,3 +26,14 @@ func InsertPhoto(t *TPhoto) error {
 	}
 	return tx.Commit()
 }
+
+func GetPhotoDirList(userId string, fileType int) ([]TPhoto, error) {
+	d := make([]TPhoto, 0, 4)
+	err:= engineSchool.Table(PhotoTable).Where("fileType=? and  userId=?", fileType, userId).Desc("createTime").Limit(100, 0).Find(&d)
+
+	if err!=nil{
+		return nil,err
+	}
+	return d, nil
+
+}
