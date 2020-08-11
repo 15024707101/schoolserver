@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gofrs/uuid"
 	"github.com/labstack/echo/v4"
+	"path/filepath"
 	"schoolserver/common/ecode"
 	"schoolserver/dao/db"
 	"schoolserver/http/middleware"
@@ -43,7 +44,7 @@ func CreateAlbum(c echo.Context) error {
 	cover := c.FormValue("cover")
 	albumName := c.FormValue("albumName")
 	userId := c.FormValue("userId")
-	fileSite := FileDirString + curUser.UserId + albumName //相册在磁盘中的位置
+	fileSite := filepath.Join(FileDirString,curUser.UserId, albumName)
 
 	id_, err := uuid.NewV4()
 	if err != nil {
