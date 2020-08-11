@@ -43,7 +43,7 @@ func CreateAlbum(c echo.Context) error {
 	cover := c.FormValue("cover")
 	albumName := c.FormValue("albumName")
 	userId := c.FormValue("userId")
-	fileSite := FileDirString + curUser.UserId + albumName //文件在磁盘中的位置
+	fileSite := FileDirString + curUser.UserId + albumName //相册在磁盘中的位置
 
 	id_, err := uuid.NewV4()
 	if err != nil {
