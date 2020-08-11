@@ -9,8 +9,8 @@ import (
 )
 
 func AppendPhoto(c echo.Context) error {
-	photoDir := c.FormValue("photoDir") //上传文件的目录
-	userId := c.FormValue("userId")     //上传文件的目录
+	userId := c.FormValue("userId")       //上传文件的目录
+	albumName := c.FormValue("albumName") //相册名称
 
 	//上传图片
 	gofile, err := UploadImgUtil(c)
@@ -23,7 +23,7 @@ func AppendPhoto(c echo.Context) error {
 	tp.CreateTime = db.NowTimeStr()
 	tp.UserId = userId
 	tp.FileId = gofile.FileId
-	tp.FileDir = FileDirString + photoDir
+	tp.AlbumName = albumName
 	tp.FileSite = gofile.FilePath
 	tp.FileUrl = gofile.FileUrl
 	tp.FileType = 2
@@ -51,16 +51,21 @@ func CreateAlbum(c echo.Context) error {
 	tp := db.TPhoto{}
 	tp.CreateTime = db.NowTimeStr()
 	tp.UserId = userId
-	tp.FileDir = albumName
+	tp.AlbumName = albumName
 	tp.FileType = 1
 	tp.Cover = cover
+	tp.FileUrl = ""
 	tp.FileId = id_.String()
 
 	err = db.InsertPhoto(&tp)
 	if err != nil {
 		return FailWithMsg(c, 4002, fmt.Sprintf("添加到数据库时候发生异常：%v", err))
 	}
-
+	//创建完相册后将 封面的 所属相册 改为当前相册
+	err = db.UpdetePhotoCover(cover, albumName)
+	if err != nil {
+		return FailWithMsg(c, 4002, fmt.Sprintf("修改封面时候发生异常：%v", err))
+	}
 	return Success(c, ecode.OK, "相册创建成功")
 }
 
@@ -80,9 +85,10 @@ func GetPhotoDirList(c echo.Context) error {
 func GetPhotoList(c echo.Context) error {
 
 	userId := c.FormValue("userId")
+	albumName := c.FormValue("albumName")
 
 	d := make([]db.TPhoto, 0, 4)
-	d, err := db.GetPhotoDirList(userId, 2)
+	d, err := db.GetPhotoList(userId, albumName, 2)
 	if err != nil {
 		return FailWithMsg(c, 4002, fmt.Sprintf("查询数据库时候发生异常：%v", err))
 	}

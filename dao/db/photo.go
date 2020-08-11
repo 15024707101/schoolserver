@@ -7,7 +7,7 @@ type TPhoto struct {
 	FileId     string `json:"fileId" xorm:"fileId"`
 	UserId     string `json:"userId" xorm:"userId"`
 	FileType   int32  `json:"fileType" xorm:"fileType"`
-	FileDir    string `json:"fileDir" xorm:"fileDir"`
+	AlbumName  string `json:"albumName" xorm:"albumName"`
 	FileSite   string `json:"fileSite" xorm:"fileSite"`
 	Cover      string `json:"cover" xorm:"cover"`
 	FileUrl    string `json:"fileUrl" xorm:"fileUrl"`
@@ -29,11 +29,41 @@ func InsertPhoto(t *TPhoto) error {
 
 func GetPhotoDirList(userId string, fileType int) ([]TPhoto, error) {
 	d := make([]TPhoto, 0, 4)
-	err:= engineSchool.Table(PhotoTable).Where("fileType=? and  userId=?", fileType, userId).Desc("createTime").Limit(100, 0).Find(&d)
+	err := engineSchool.Table(PhotoTable).Where("fileType=? and  userId=?", fileType, userId).Desc("createTime").Limit(100, 0).Find(&d)
 
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
 	return d, nil
 
+}
+
+func GetPhotoList(userId string, albumName string, fileType int) ([]TPhoto, error) {
+	d := make([]TPhoto, 0, 4)
+	err := engineSchool.Table(PhotoTable).Where("fileType=? and  albumName=? and  userId=?", fileType, albumName, userId).Desc("createTime").Limit(100, 0).Find(&d)
+
+	if err != nil {
+		return nil, err
+	}
+	return d, nil
+
+}
+
+//创建完相册后将 封面的 所属相册 改为当前相册
+func UpdetePhotoCover(cover string, albumName string) error {
+	tx := engineSchool.NewSession()
+	tp := TPhoto{
+		AlbumName: albumName,
+	}
+	_, err := tx.Table(PhotoTable).Where("fileUrl=?", cover).Update(tp)
+
+	//_, err = update.Exec()
+	if err != nil {
+		return err
+	}
+	if err != nil {
+		return tx.Rollback()
+	}
+
+	return tx.Commit()
 }
