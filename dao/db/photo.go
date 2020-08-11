@@ -67,3 +67,18 @@ func UpdetePhotoCover(cover string, albumName string) error {
 
 	return tx.Commit()
 }
+
+func DeletePhoto(fileSite string) error {
+	tx := engineSchool.NewSession()
+	tp := TPhoto{
+		FileSite: fileSite,
+	}
+
+	_, err := tx.Table(PhotoTable).Where("fileSite=?", fileSite).Delete(tp)
+
+	if err != nil {
+		return tx.Rollback()
+	}
+
+	return tx.Commit()
+}

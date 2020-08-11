@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"schoolserver/common/ecode"
+	"schoolserver/dao/db"
 )
 
 var FileUrlString = "http://127.0.0.1:3334/img"
@@ -144,6 +145,11 @@ func DeleteFile(c echo.Context) error {
 	err := os.Remove(filepath)
 	if err != nil {
 		return FailWithMsg(c, 4001, fmt.Sprintf("删除失败，未找到指定文件：%v", err))
+	}
+	//从数据库移除
+	err =db.DeletePhoto(f.FilePath)
+	if err != nil {
+		return FailWithMsg(c, 4001, fmt.Sprintf("删除失败，删除数据库时异常：%v", err))
 	}
 	return Success(c, ecode.OK, "删除成功")
 }
