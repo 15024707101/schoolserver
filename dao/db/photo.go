@@ -8,11 +8,18 @@ type TPhoto struct {
 	UserId     string `json:"userId" xorm:"userId"`
 	FileType   int32  `json:"fileType" xorm:"fileType"`
 	AlbumName  string `json:"albumName" xorm:"albumName"`
-	FileSite   string `json:"fileSite" xorm:"fileSite"`//（相册或照片在磁盘中的位置，便于找到并删除）
-	Cover      string `json:"cover" xorm:"cover"`//封面
+	FileSite   string `json:"fileSite" xorm:"fileSite"` //（相册或照片在磁盘中的位置，便于找到并删除）
+	Cover      string `json:"cover" xorm:"cover"`       //封面
 	FileUrl    string `json:"fileUrl" xorm:"fileUrl"`
 	CreateTime string `json:"createTime" xorm:"createTime"`
+	PhotoCount int32  `json:"photoCount" xorm:"-"`
 }
+
+type Photo struct {
+	AlbumName  string `json:"albumName" xorm:"albumName"`
+	PhotoCount int32  `json:"photoCount" xorm:"photoCount"`
+}
+
 
 func InsertPhoto(t *TPhoto) error {
 	tx := engineSchool.NewSession()
@@ -41,6 +48,17 @@ func GetPhotoDirList(userId string, fileType int) ([]TPhoto, error) {
 func GetPhotoList(userId string, albumName string, fileType int) ([]TPhoto, error) {
 	d := make([]TPhoto, 0, 4)
 	err := engineSchool.Table(PhotoTable).Where("fileType=? and  albumName=? and  userId=?", fileType, albumName, userId).Desc("createTime").Limit(100, 0).Find(&d)
+
+	if err != nil {
+		return nil, err
+	}
+	return d, nil
+
+}
+
+func GetPhotoCount() ([]Photo, error) {
+	d := make([]Photo, 0, 4)
+	err := engineSchool.SQL("select  albumName ,COUNT(*)  photoCount   from  t_photo where fileType!=1  GROUP BY  albumName  ").Find(&d)
 
 	if err != nil {
 		return nil, err

@@ -83,6 +83,23 @@ func GetPhotoDirList(c echo.Context) error {
 		return FailWithMsg(c, 4002, fmt.Sprintf("添加到数据库时候发生异常：%v", err))
 	}
 
+	d2 := make([]db.Photo, 0, 4)
+	d2, err = db.GetPhotoCount()
+	if err != nil {
+		return FailWithMsg(c, 4002, fmt.Sprintf("添加到数据库时候发生异常：%v", err))
+	}
+
+	for i,o:= range d {
+		for _,o2:= range d2 {
+			if o.AlbumName==o2.AlbumName {
+				//o.PhotoCount=o2.PhotoCount
+				d[i].PhotoCount=o2.PhotoCount
+				break
+
+			}
+		}
+	}
+
 	return Success(c, ecode.OK, d)
 }
 
