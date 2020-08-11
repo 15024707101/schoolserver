@@ -8,8 +8,8 @@ type TPhoto struct {
 	UserId     string `json:"userId" xorm:"userId"`
 	FileType   int32  `json:"fileType" xorm:"fileType"`
 	AlbumName  string `json:"albumName" xorm:"albumName"`
-	FileSite   string `json:"fileSite" xorm:"fileSite"`
-	Cover      string `json:"cover" xorm:"cover"`
+	FileSite   string `json:"fileSite" xorm:"fileSite"`//文件在磁盘中的位置
+	Cover      string `json:"cover" xorm:"cover"`//封面
 	FileUrl    string `json:"fileUrl" xorm:"fileUrl"`
 	CreateTime string `json:"createTime" xorm:"createTime"`
 }

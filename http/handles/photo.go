@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"schoolserver/common/ecode"
 	"schoolserver/dao/db"
+	"schoolserver/http/middleware"
 )
 
 func AppendPhoto(c echo.Context) error {
@@ -38,10 +39,11 @@ func AppendPhoto(c echo.Context) error {
 }
 
 func CreateAlbum(c echo.Context) error {
-
+	curUser := c.Get(middleware.CtxUser).(*db.TUser)
 	cover := c.FormValue("cover")
 	albumName := c.FormValue("albumName")
 	userId := c.FormValue("userId")
+	fileSite := FileDirString + curUser.UserId + albumName //文件在磁盘中的位置
 
 	id_, err := uuid.NewV4()
 	if err != nil {
@@ -52,6 +54,7 @@ func CreateAlbum(c echo.Context) error {
 	tp.CreateTime = db.NowTimeStr()
 	tp.UserId = userId
 	tp.AlbumName = albumName
+	tp.FileSite = fileSite
 	tp.FileType = 1
 	tp.Cover = cover
 	tp.FileUrl = ""
